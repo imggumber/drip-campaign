@@ -1,4 +1,9 @@
 <?php
+DEFINE("HOSTNAME", 'localhost');
+DEFINE("USERNAME", 'root');
+DEFINE("PASSWORD", '');
+DEFINE("DATABASE", 'db_listmonk');
+
 DEFINE("API_PATH", "add_listmonk_api_path");
 DEFINE("API_TOKEN", "add_listmonk_api_token");
 
