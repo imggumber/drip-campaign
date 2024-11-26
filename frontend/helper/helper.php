@@ -36,3 +36,6 @@ function sendApiRequest($method, $apiUrl, $token = API_TOKEN, $data = null) {
     // Return the response
     return json_decode($response, true);  // Decode the JSON response into an associative array
 }
+
+?>
+
