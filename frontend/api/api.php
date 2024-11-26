@@ -16,6 +16,7 @@ function get_campaigns($id = '')
                 $api_url  = API_PATH . '/campaigns/' . $id;
                 $response = sendApiRequest('GET', $api_url);
             } else {
+                add_log("Failed to fetch single campaign");
                 $response = [
                     'message' => 'Invalid request',
                     'status'  => 400
@@ -28,8 +29,13 @@ function get_campaigns($id = '')
             ];
         }
     } else {
-        $api_url = API_PATH . '/campaigns';
-        $response    = sendApiRequest('GET', $api_url);
+        $api_url  = API_PATH . '/campaigns';
+        $res = sendApiRequest('GET', $api_url);
+        if (!empty($res) || $res != NULL ) {
+            $response = $res;
+        } else {
+            add_log("Failed to fetch campaigns list");
+        }
     }
 
     return $response;
