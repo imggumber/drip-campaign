@@ -1,0 +1,5 @@
+<?php
+DEFINE("API_PATH", "add_listmonk_api_path");
+DEFINE("API_TOKEN", "add_listmonk_api_token");
+
+require './helper/helper.php';
