@@ -2,7 +2,6 @@
 require './api/api.php';
 
 $campaigns        = get_campaigns(); // Fetch all campaigns
-$single_campaigns = get_campaigns(1); // Fetch single campaign
 
 $campaigns_lists = isset($campaigns['data']['results']) ? $campaigns['data']['results'] : '';
 ?>
@@ -24,7 +23,7 @@ $campaigns_lists = isset($campaigns['data']['results']) ? $campaigns['data']['re
         <div class="d-flex justify-content-center align-items-center flex-column" style="padding: 20vh 0px;">
             <form method="post" class="w-50 mb-3">
                 <div class="mb-3">
-                    <select id="select-campaign" class="form-select form-select mb-3" aria-label="Large select example" required>
+                    <select id="select-campaign" name="select-campaign" class="form-select form-select mb-3" aria-label="Large select example" required>
                         <option value="" selected>Select campaign</option>
 
                         <?php
@@ -39,35 +38,21 @@ $campaigns_lists = isset($campaigns['data']['results']) ? $campaigns['data']['re
                             }
                         ?>
                     </select>
+                    <?= $campagin_err ? '<p class="text-danger">This field is required</p>' : ''; ?>
                 </div>
                 <div class="mb-3">
                     <input type="datetime-local" name="select-datetime" class="form-control mb-3" id="datetime-local">
+                    <div id="passwordHelpBlock" class="mt-1 form-text">
+                        <span>Please provide date and time according to the New York time zone (Eastern Standard Time, EST / Eastern Daylight Time, EDT).</span>
+                    </div>
                 </div>
                 <div class="mb-3 text-center">
-                    <button id="add-campaign-btn" type="submit" class="btn btn-primary">Add Campaign</button>
+                    <button id="add-campaign-btn" name="add-campaign-btn" type="submit" class="btn btn-primary">Add Campaign</button>
                 </div>
             </form>
 
             <div class="w-50">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Date</th>
-                            <th class="text-center" colspan="2" scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-striped">
-                        <tr>
-                            <td>1</td>
-                            <td>Campaign Example</td>
-                            <td>Dec 25, 2024</td>
-                            <td class="text-end"><button type="button" class="btn btn-sm btn-outline-warning">Edit</button></td>
-                            <td><button type="button" class="btn btn-sm btn-outline-danger">Delete</button></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <?php  require './partials/records.php' ?>
             </div>
         </div>
     </div>
