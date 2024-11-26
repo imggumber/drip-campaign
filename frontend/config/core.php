@@ -1,4 +1,31 @@
 <?php
+// Establish Connection
+function establish_connection()
+{
+    try {
+        $conn = new PDO("mysql:host=" . HOSTNAME . ";dbname=" . DATABASE . "", USERNAME, PASSWORD);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $result      = $conn->query("SHOW TABLES LIKE 'TbCampaigns'");
+        $tableExists = $result !== false && $result->rowCount() > 0;
+
+        if (! $tableExists) {
+            $sql = "CREATE TABLE `db_listmonk`.`TbCampaigns` (`id` BIGINT NOT NULL AUTO_INCREMENT , `camp_id` BIGINT NOT NULL , `camp_datetime` DATETIME NOT NULL , `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated-at` TIMESTAMP NULL DEFAULT NULL , PRIMARY KEY (`id`))";
+            
+            try {
+                $conn->exec($sql);
+            } catch (PDOException $e) {
+                add_log($e->getMessage());
+            }
+        }
+
+    } catch (PDOException $e) {
+        add_log($e->getMessage());
+        echo "<h1>Failed to establish connection.</h1>";
+        die;
+    }
+}
+
 // Create log folder and files
 function createLogDir()
 {
@@ -48,8 +75,6 @@ function createLogDir()
     }
 }
 
-createLogDir();
-
 // Add logs
 function add_log($message, $logFile = 'logs/error.log')
 {
@@ -78,3 +103,43 @@ function add_log($message, $logFile = 'logs/error.log')
     // Append the log message to the log file
     file_put_contents($logFile, $logMessage, FILE_APPEND);
 }
+
+// Send API Request
+function sendApiRequest($method, $apiUrl, $token = API_TOKEN, $data = null) {
+    // Initialize cURL session
+    $ch = curl_init();
+    
+    // Set default options for the cURL request
+    curl_setopt($ch, CURLOPT_URL, $apiUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: token ' . $token,
+        'Content-Type: application/json'
+    ]);
+    
+    // Set the HTTP request method (GET, POST, PUT, DELETE, etc.)
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+    
+    // If there's data (for POST or PUT), attach it to the request
+    if ($data) {
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    }
+    
+    // Execute the request and get the response
+    $response = curl_exec($ch);
+    
+    // Check for errors
+    if ($response === false) {
+        $error = curl_error($ch);
+        curl_close($ch);
+        return "cURL Error: " . $error;
+    }
+    
+    // Close the cURL session
+    curl_close($ch);
+    
+    // Return the response
+    return json_decode($response, true);  // Decode the JSON response into an associative array
+}
+
+
