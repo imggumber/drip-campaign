@@ -15,12 +15,6 @@ function setNewYorkTime() {
     $("#datetime-local").val(formattedDate);
 }
 
-function addCampagign() {
-
-}
-
-
 $(function () {
     setNewYorkTime();
-    addCampagign();
 });

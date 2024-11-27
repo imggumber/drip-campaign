@@ -1,9 +1,22 @@
 <?php
 require './api/api.php';
-
-$campaigns        = get_campaigns(); // Fetch all campaigns
-
+$edit_record     = '';
+$campaigns       = get_campaigns(); // Fetch all campaigns
 $campaigns_lists = isset($campaigns['data']['results']) ? $campaigns['data']['results'] : '';
+
+
+// Fetch single record
+if (isset($_GET['edit']) && !empty($_GET['edit'])) {
+    $edit_record = single_record($_GET['edit']);
+}
+
+$et_mysql_id = $et_camp_id = $camp_datetime = '';
+if (is_array($edit_record) && !empty($edit_record)) {
+    $et_mysql_id   = isset($edit_record['id']) ? $edit_record['id'] : '';
+    $et_camp_id    = isset($edit_record['camp_id']) ? $edit_record['camp_id'] : '';
+    $camp_datetime = isset($edit_record['camp_datetime']) ? $edit_record['camp_datetime'] : '';
+}
+
 ?>
 
 
@@ -32,7 +45,7 @@ $campaigns_lists = isset($campaigns['data']['results']) ? $campaigns['data']['re
                                     $id   = isset($campaign['id']) ? $campaign['id'] : '';
                                     $name = isset($campaign['name']) ? $campaign['name'] : '';
                                     if (!empty($id) && !empty($name)) { ?>
-                                        <option value="<?= $id; ?>"><?= $name; ?></option> <?php
+                                        <option value="<?= $id; ?>" <?= $id == $et_camp_id ? 'selected' : ''; ?>><?= $name; ?></option> <?php
                                     }
                                 }
                             }
@@ -41,12 +54,13 @@ $campaigns_lists = isset($campaigns['data']['results']) ? $campaigns['data']['re
                     <?= $campagin_err ? '<p class="text-danger">This field is required</p>' : ''; ?>
                 </div>
                 <div class="mb-3">
-                    <input type="datetime-local" name="select-datetime" class="form-control mb-3" id="datetime-local">
+                    <input type="datetime-local" name="select-datetime" value="<?= !empty($camp_datetime) ? $camp_datetime : ''; ?>" class="form-control mb-3" id="datetime-local">
                     <div id="passwordHelpBlock" class="mt-1 form-text">
                         <span>Please provide date and time according to the New York time zone (Eastern Standard Time, EST / Eastern Daylight Time, EDT).</span>
                     </div>
                 </div>
                 <div class="mb-3 text-center">
+                    <input type="hidden" name="edit-data" value="<?= !empty($et_mysql_id) ? $et_mysql_id : ''; ?>">
                     <button id="add-campaign-btn" name="add-campaign-btn" type="submit" class="btn btn-primary">Add Campaign</button>
                 </div>
             </form>

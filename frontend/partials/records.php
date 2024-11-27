@@ -20,13 +20,19 @@ if (isset($records['status']) && $records['status'] == true) {    ?>
                         $camp_id  = isset($d['camp_id']) ? $d['camp_id'] : '';
                         $datetime = isset($d['camp_datetime']) ? $d['camp_datetime'] : '';
                         
-                        if (!empty($id) && !empty($camp_id) && !empty($datetime)) { ?>
+                        if (!empty($id) && !empty($camp_id) && !empty($datetime)) {
+                            $name = ''; 
+                            $campaign = get_campaigns($camp_id);
+                            $campaign_data = isset($campaign['data']) ? $campaign['data'] : '';
+                            if (is_array($campaign_data) && !empty($campaign_data)) {
+                                $name = (isset($campaign_data['name']) && !empty($campaign_data['name'])) ? $campaign_data['name'] : '';
+                            } ?>
                             <tr>
                                 <td><?= ($key + 1) ?></td>
-                                <td>Campaign Example</td>
-                                <td>Dec 25, 2024</td>
+                                <td><?= $name ?></td>
+                                <td><?= display_date($datetime) ?></td>
                                 <td class="text-center">
-                                    <a class="me-md-2 me-0 text-warning" href="?edit=<?=$id;?>">Edit</a>
+                                    <a id="edit-btn-<?=$key + 1?>" class="edit-btn me-md-2 me-0 text-warning" href="?edit=<?=$id;?>">Edit</a>
                                     <a  href="?del=<?=$id;?>" class="text-danger">Delete</a>
                                 </td>
                             </tr> <?php
