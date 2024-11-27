@@ -20,7 +20,7 @@ if (isset($_POST['add-campaign-btn'])) {
         $datetime_err = true;
         exit;
     }
-    
+
     try {
         // Check if the table exists
         $table = $pdo->query("SHOW TABLES LIKE '" . $table_name . "'")->fetch();
@@ -140,5 +140,21 @@ function single_record($id, $table_name = 'TbCampaigns')
         }
     } else {
         add_log("Oops! Something went wrong. Please try again later.");
+    }
+}
+
+if (isset($_GET['del']) && !empty($_GET['del'])) {
+    $id = $_GET['del'];
+    // Prepare a delete statement
+    $sql = "DELETE FROM " . $table_name . " WHERE id = :id";
+
+    if ($stmt = $pdo->prepare($sql)) {
+        // Bind variables to the prepared statement as parameters
+        $stmt->bindParam(":id", $id);
+        // Attempt to execute the prepared statement
+        if ($stmt->execute()) {
+        } else {
+            echo "Oops! Something went wrong. Please try again later.";
+        }
     }
 }
